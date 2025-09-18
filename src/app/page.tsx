@@ -197,17 +197,28 @@ export default function HomePage() {
       });
 
       if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `coding-questions-${Date.now()}.${format === 'pdf' ? 'pdf' : 'md'}`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        toast.success(`Questions exported as ${format.toUpperCase()}`);
+        if (format === 'markdown') {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `coding-questions-${Date.now()}.md`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
+          toast.success('Questions exported as Markdown');
+        } else if (format === 'pdf') {
+          // Handle PDF generation client-side
+          const data = await response.json();
+          if (data.success && data.data) {
+            await generatePDF(data.data);
+            toast.success('Questions exported as PDF');
+          } else {
+            throw new Error('Failed to get questions data for PDF');
+          }
+        }
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Export failed');
@@ -216,6 +227,88 @@ export default function HomePage() {
       console.error('Error exporting questions:', error);
       toast.error(`Failed to export as ${format.toUpperCase()}`);
     }
+  };
+
+  const generatePDF = async (data: any) => {
+    // Dynamic import for client-side only
+    const { jsPDF } = await import('jspdf');
+    
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    let yPosition = 20;
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 20;
+    const lineHeight = 6;
+    
+    // Title
+    pdf.setFontSize(24);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('AI Coding Book - Questions', margin, yPosition);
+    yPosition += 15;
+    
+    // Date
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Generated on: ${data.metadata.generatedOn}`, margin, yPosition);
+    yPosition += 10;
+    
+    // Questions count
+    pdf.text(`Total Questions: ${data.metadata.totalQuestions}`, margin, yPosition);
+    yPosition += 15;
+    
+    data.questions.forEach((question: any, index: number) => {
+      // Check if we need a new page
+      if (yPosition > pageHeight - 50) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+      
+      // Question header
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      const title = `${question.id}: ${question.title}`;
+      pdf.text(title, margin, yPosition);
+      yPosition += 10;
+      
+      // Difficulty and Topics
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Difficulty: ${question.difficulty}`, margin, yPosition);
+      yPosition += lineHeight;
+      
+      pdf.text(`Topics: ${question.topics.join(', ')}`, margin, yPosition);
+      yPosition += lineHeight + 2;
+      
+      // Description
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Description:', margin, yPosition);
+      yPosition += lineHeight;
+      
+      pdf.setFont('helvetica', 'normal');
+      const descriptionLines = pdf.splitTextToSize(question.description, 170);
+      descriptionLines.forEach((line: string) => {
+        if (yPosition > pageHeight - 30) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        pdf.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
+      yPosition += 3;
+      
+      // Add separator if not last question
+      if (index < data.questions.length - 1) {
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(margin, yPosition, 190, yPosition);
+        yPosition += 10;
+      }
+    });
+    
+    pdf.save(`coding-questions-${Date.now()}.pdf`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

@@ -60,12 +60,18 @@ export default function QuestionPage() {
       switch (event.key) {
         case 'ArrowLeft':
           if (currentIndex > 0) {
-            router.push(`/question/${state.allQuestions[currentIndex - 1].id}`);
+            const prevQ = state.allQuestions[currentIndex - 1];
+            if (prevQ) {
+              router.push(`/question/${prevQ.id}`);
+            }
           }
           break;
         case 'ArrowRight':
           if (currentIndex < state.allQuestions.length - 1) {
-            router.push(`/question/${state.allQuestions[currentIndex + 1].id}`);
+            const nextQ = state.allQuestions[currentIndex + 1];
+            if (nextQ) {
+              router.push(`/question/${nextQ.id}`);
+            }
           }
           break;
         case 'h':
@@ -87,7 +93,7 @@ export default function QuestionPage() {
       const data: ApiResponse<Question> = await response.json();
 
       if (data.success && data.data) {
-        setState(prev => ({ ...prev, question: data.data, loading: false }));
+        setState(prev => ({ ...prev, question: data.data || null, loading: false }));
       } else {
         throw new Error(data.error || 'Question not found');
       }
@@ -356,12 +362,12 @@ export default function QuestionPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Navigation 
-                prevQuestion={prevQuestion}
-                nextQuestion={nextQuestion}
-                currentIndex={currentIndex}
-                totalQuestions={allQuestions.length}
-              />
+            <Navigation 
+              prevQuestion={prevQuestion || null}
+              nextQuestion={nextQuestion || null}
+              currentIndex={currentIndex >= 0 ? currentIndex : undefined}
+              totalQuestions={allQuestions.length}
+            />
             </motion.div>
             
             {/* Chat */}

@@ -14,10 +14,12 @@ export function validateQuestion(data: unknown) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
-      throw new ValidationError(
-        `Invalid question data: ${firstError.message}`,
-        firstError.path.join('.')
-      );
+      if (firstError) {
+        throw new ValidationError(
+          `Invalid question data: ${firstError.message}`,
+          firstError.path.join('.')
+        );
+      }
     }
     throw new ValidationError('Invalid question data');
   }
@@ -29,10 +31,12 @@ export function validateChatMessage(data: unknown) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
-      throw new ValidationError(
-        `Invalid chat message: ${firstError.message}`,
-        firstError.path.join('.')
-      );
+      if (firstError) {
+        throw new ValidationError(
+          `Invalid chat message: ${firstError.message}`,
+          firstError.path.join('.')
+        );
+      }
     }
     throw new ValidationError('Invalid chat message');
   }
@@ -44,10 +48,12 @@ export function validateGenerateRequest(data: unknown) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
-      throw new ValidationError(
-        `Invalid generate request: ${firstError.message}`,
-        firstError.path.join('.')
-      );
+      if (firstError) {
+        throw new ValidationError(
+          `Invalid generate request: ${firstError.message}`,
+          firstError.path.join('.')
+        );
+      }
     }
     throw new ValidationError('Invalid generate request');
   }
@@ -59,10 +65,12 @@ export function validateExportFormat(data: unknown) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
-      throw new ValidationError(
-        `Invalid export format: ${firstError.message}`,
-        firstError.path.join('.')
-      );
+      if (firstError) {
+        throw new ValidationError(
+          `Invalid export format: ${firstError.message}`,
+          firstError.path.join('.')
+        );
+      }
     }
     throw new ValidationError('Invalid export format');
   }
@@ -74,10 +82,12 @@ export function validateChatRequest(data: unknown) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
-      throw new ValidationError(
-        `Invalid chat request: ${firstError.message}`,
-        firstError.path.join('.')
-      );
+      if (firstError) {
+        throw new ValidationError(
+          `Invalid chat request: ${firstError.message}`,
+          firstError.path.join('.')
+        );
+      }
     }
     throw new ValidationError('Invalid chat request');
   }

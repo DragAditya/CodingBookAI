@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Home, List } from 'lucide-react';
 interface NavigationProps {
   prevQuestion: Question | null;
   nextQuestion: Question | null;
-  currentIndex?: number;
+  currentIndex?: number | undefined;
   totalQuestions?: number;
 }
 
