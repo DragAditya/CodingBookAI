@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "preinstall": "npm install --save-dev typescript @types/node",
+    "preinstall": "echo 'Installing TypeScript and types before build'",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm install typescript @types/node && next build",
     "start": "next start -p $PORT",
     "lint": "next lint",
     "type-check": "tsc --noEmit"
