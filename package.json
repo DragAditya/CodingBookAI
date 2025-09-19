@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "postinstall": "npm install --save-dev typescript @types/node"
   },
   "dependencies": {
     "next": "^14.0.4",
@@ -19,7 +20,6 @@
     "react-markdown": "^9.0.1",
     "jspdf": "^2.5.1",
     "html2canvas": "^1.4.1",
-    "better-sqlite3": "^9.2.2",
     "zod": "^3.22.4",
     "clsx": "^2.0.0",
     "lucide-react": "^0.294.0",
@@ -35,7 +35,6 @@
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
-    "@types/better-sqlite3": "^7.6.8",
     "@types/prismjs": "^1.26.3",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4"
