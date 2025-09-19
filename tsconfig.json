@@ -22,7 +22,6 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    {
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
