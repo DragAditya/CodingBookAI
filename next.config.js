@@ -1,18 +1,23 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['better-sqlite3'],
   },
   webpack: (config, { isServer }) => {
+    // Alias for "@/..." imports
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      '@': require('path').resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, 'src'),
     };
-    return config;
-  },
-};
 
-module.exports = nextConfig;
+    // Keep your existing better-sqlite3 externals
+    if (isServer) {
+      config.externals.push('better-sqlite3');
+    }
+
+    return config;
   },
   images: {
     domains: [],
@@ -36,9 +41,10 @@ module.exports = nextConfig;
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: process.env.NODE_ENV === 'production' 
-              ? (process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com')
-              : '*',
+            value:
+              process.env.NODE_ENV === 'production'
+                ? process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com'
+                : '*',
           },
           {
             key: 'Access-Control-Allow-Methods',
